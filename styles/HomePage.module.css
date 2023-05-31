@@ -1,0 +1,45 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+  
+.header {
+    height: 40px;
+    background-color: #f2f2f2;
+}
+  
+.content {
+    display: flex;
+}
+  
+.nav {
+    width: 23%;
+    background-color: #e6e6e6;
+}
+  
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+  
+.news {
+    height: 240px;
+    background-color: #d9d9d9;
+    display: flex;
+}
+
+.newsContainer {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+}
+  
+.newsItem {
+    flex: 0 0 33.33%; /* Adjust the width of each news item as per your preference */
+    padding: 1rem;
+}
+
+.founders {
+    background-color: #cccccc;
+}
