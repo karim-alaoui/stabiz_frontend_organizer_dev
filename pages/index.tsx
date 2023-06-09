@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import styles from '../styles/HomePage.module.css';
+import styles from '../styles/MainPage.module.css';
+import Header from '../components/Header';
 
-const HomePage: React.FC = () => {
+const MainPage: React.FC = () => {
   const [newsData, setNewsData] = useState([]);
   const [founderProfilesData, setFounderProfilesData] = useState([]);
   const router = useRouter();
@@ -35,25 +36,9 @@ const HomePage: React.FC = () => {
     fetchData();
   }, [router]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('organizer-token');
-
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-        
-      } catch (error) {
-        console.error('Error fetching news data:', error);
-      }
-    };
-
-    fetchData();
-  }, [router]);
-
   return (
     <div className={styles.container}>
-      <header className={styles.header}>Header</header>
+      <Header />
       <div className={styles.content}>
         <nav className={styles.nav}>Left Navigation Bar</nav>
         <main className={styles.main}>
@@ -104,4 +89,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage;
+export default MainPage;
