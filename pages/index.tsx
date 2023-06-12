@@ -36,6 +36,11 @@ const MainPage: React.FC = () => {
     fetchData();
   }, [router]);
 
+  
+  const handleNewsDetail = (id: number) => {
+    router.push(`/news/${id}`);
+  };
+
   return (
     <div className={styles.container}>
       <Header />
@@ -50,7 +55,7 @@ const MainPage: React.FC = () => {
                   <h3>{news.title}</h3>
                   <p>{news.body}</p>
                   <p>Created At: {new Date(news.created_at).toLocaleDateString('en-US')}</p>
-                  <button>News Detail</button>
+                  <button onClick={() => handleNewsDetail(news.id)}>News Detail</button>
                 </div>
               ))}
             </div>
