@@ -40,18 +40,18 @@ const IndexPage: React.FC = () => {
   const goToPreviousNews = () => {
     const currentIndex = newsData.findIndex((news: any) => news.id === selectedNews.id);
     const previousIndex = currentIndex + 1;
-    if (previousIndex < newsData.length) {
+    if (previousIndex >= 0) {
       const previousNews = newsData[previousIndex];
-      router.push(`/news/${previousNews.id}`);
+      setSelectedNews(previousNews);
     }
   };
 
   const goToNextNews = () => {
     const currentIndex = newsData.findIndex((news: any) => news.id === selectedNews.id);
     const nextIndex = currentIndex - 1;
-    if (nextIndex >= 0) {
+    if (nextIndex < newsData.length) {
       const nextNews = newsData[nextIndex];
-      router.push(`/news/${nextNews.id}`);
+      setSelectedNews(nextNews);
     }
   };
 

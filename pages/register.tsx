@@ -45,7 +45,7 @@ const RegisterPage: React.FC = () => {
         console.log(data);
 
         // Redirect the user to the desired page
-        router.push('/login');
+        router.push(`/login?register-success=true`);
       })
       .catch((error) => {
         // Handle any errors here
@@ -64,7 +64,7 @@ const RegisterPage: React.FC = () => {
   return (
     <div>
       <Header />
-      <h2>Register</h2>
+      <h1>Register</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email">Email:</label>

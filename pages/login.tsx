@@ -54,10 +54,18 @@ const LoginPage: React.FC = () => {
   return (
     <div>
       <Header />
-      <div>Login Page</div>
+      <div>
+        <h1>Login Page</h1>
+      </div>
       <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" value={email} onChange={handleEmailChange} required />
-        <input type="password" placeholder="Password" value={password} onChange={handlePasswordChange} minLength={8} required />
+        <div>
+          <label htmlFor="E-mail">E-mail:</label>
+          <input type="email" id="email" value={email} onChange={handleEmailChange} required />
+        </div>
+        <div>
+          <label htmlFor="Password">Password:</label>
+          <input type="password" id="password" value={password} onChange={handlePasswordChange} minLength={8} required />
+        </div>
         <button type="submit">Login</button>
       </form>
     </div>
