@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
+import SideNavBar from '../components/SideNavBar';
 
 const EditProfilePage: React.FC = () => {
   const router = useRouter();
@@ -108,6 +109,7 @@ const EditProfilePage: React.FC = () => {
     <div>
       <Header />
       <div>
+        <SideNavBar />
         <h1>Edit Profile</h1>
         <form onSubmit={handleSubmit}>
           <div>

@@ -1,6 +1,6 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // Send request to the login API endpoint
     fetch('http://127.0.0.1:8000/api/v1/organizer/login', {
       method: 'POST',
@@ -30,7 +30,7 @@ const LoginPage: React.FC = () => {
       .then((data) => {
         // Assuming the API response contains an 'accessToken' field
         const { accessToken } = data;
-        
+
         // Store the token in local storage
         localStorage.setItem('organizer-token', accessToken);
 
@@ -42,6 +42,7 @@ const LoginPage: React.FC = () => {
         console.error(error);
       });
   };
+
   useEffect(() => {
     // Check if the user is already logged in (e.g., by checking the token in local storage)
     const token = localStorage.getItem('organizer-token');
@@ -51,6 +52,10 @@ const LoginPage: React.FC = () => {
     }
   }, []);
 
+  const handleForgotPasswordClick = () => {
+    router.push('/forgot-password');
+  };
+
   return (
     <div>
       <Header />
@@ -59,15 +64,16 @@ const LoginPage: React.FC = () => {
       </div>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="E-mail">E-mail:</label>
+          <label htmlFor="email">E-mail:</label>
           <input type="email" id="email" value={email} onChange={handleEmailChange} required />
         </div>
         <div>
-          <label htmlFor="Password">Password:</label>
+          <label htmlFor="password">Password:</label>
           <input type="password" id="password" value={password} onChange={handlePasswordChange} minLength={8} required />
         </div>
         <button type="submit">Login</button>
       </form>
+      <p onClick={handleForgotPasswordClick}>Forgot your password? Click here.</p>
     </div>
   );
 };

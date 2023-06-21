@@ -1,11 +1,10 @@
-"use client";
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Modal from 'react-modal';
 import styles from '../styles/MainPage.module.css';
 import Header from '../components/Header';
+import SideNavBar from '../components/SideNavBar';
 
 // Set the app element to the root of your application
 if (typeof window !== 'undefined') {
@@ -13,13 +12,21 @@ if (typeof window !== 'undefined') {
 }
 
 const MainPage: React.FC = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('readonly');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
   const [newsData, setNewsData] = useState([]);
   const [founderProfilesData, setFounderProfilesData] = useState([]);
-  const [modalIsOpen, setModalIsOpen] = useState(false); // Add modal state
-  const [founderUsersData, setFounderUsersData] = useState([]); // Add founder users state
-  const [selectedFounderProfile, setSelectedFounderProfile] = useState(null); // Add selected founder profile state
-  const [editModalIsOpen, setEditModalIsOpen] = useState(false); // Add edit modal state
-  const [selectedUser, setSelectedUser] = useState<any>(null); // Explicitly set the type as 'any' // Add selected user state
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [founderUsersData, setFounderUsersData] = useState([]);
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [selectedFounderProfile, setSelectedFounderProfile] = useState<any>(null);
+  const [editModalIsOpen, setEditModalIsOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -28,13 +35,13 @@ const MainPage: React.FC = () => {
         const token = localStorage.getItem('organizer-token');
 
         if (!token) {
-          router.push('/login'); // Redirect to login page if token is not found
+          router.push('/login');
           return;
         }
 
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-        const newsResponse  = await axios.get('http://localhost:8000/api/v1/news-topic');
+        const newsResponse = await axios.get('http://localhost:8000/api/v1/news-topic');
         setNewsData(newsResponse.data.data);
 
         const founderProfilesResponse = await axios.get('http://localhost:8000/api/v1/organizer/founder-profiles');
@@ -51,10 +58,10 @@ const MainPage: React.FC = () => {
     router.push(`/news/${id}`);
   };
 
-  const handleOpenModal = (founderProfile : any) => {
+  const handleOpenModal = (founderProfile: any) => {
     setSelectedFounderProfile(founderProfile);
     setModalIsOpen(true);
-    fetchFounderUsers(founderProfile.id); // Fetch founder users for the selected founder profile
+    fetchFounderUsers(founderProfile.id);
   };
 
   const handleCloseModal = () => {
@@ -62,17 +69,17 @@ const MainPage: React.FC = () => {
     setModalIsOpen(false);
   };
 
-  const handleOpenEditModal = (user : any) => {
+  const handleOpenEditModal = (user: any) => {
     setSelectedUser(user);
     setEditModalIsOpen(true);
   };
 
   const handleCloseEditModal = () => {
-    setSelectedUser(null); // Reset selectedUser when closing the modal
+    setSelectedUser(null);
     setEditModalIsOpen(false);
   };
 
-  const fetchFounderUsers = async (founderProfileId : any) => {
+  const fetchFounderUsers = async (founderProfileId: any) => {
     try {
       const response = await axios.get(`http://localhost:8000/api/v1/organizer/founder-profiles/${founderProfileId}/founder-users`);
       setFounderUsersData(response.data.founder_users);
@@ -81,11 +88,73 @@ const MainPage: React.FC = () => {
     }
   };
 
+  const handleSaveFounderUser = async () => {
+    if (selectedFounderProfile === null) {
+      return; // Handle the null case
+    }
+    try {
+      // Check if the password and confirm password match and meet the length requirement
+      if (password !== confirmPassword || password.length < 8) {
+        console.log("passwords do not match or password is less than 8 characters")
+        return;
+      }
+
+      const token = localStorage.getItem('organizer-token');
+  
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+  
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  
+      const response = await axios.post(
+        'http://localhost:8000/api/v1/organizer/founder-users',
+        {
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          password: password,
+          role: role,
+          founder_id: selectedFounderProfile.id,
+        }
+      );
+      //clear the form
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+      setRole('');
+      // Close the create modal and refresh the founder users for the selected founder profile
+      setCreateModalOpen(false);
+      fetchFounderUsers(selectedFounderProfile.id);
+    } catch (error) {
+      console.error('Error creating founder user:', error);
+    }
+  };
+  
+  const handleCloseCreateModal = () => {
+    setSelectedFounderProfile(null);
+    setCreateModalOpen(false);
+  };
+
+  const handleCreateFounderUser = () => {
+    setCreateModalOpen(true);
+  };
+
+  const handleApplyEditUser = () => {
+    // Apply the edits to the user
+    // Submit the updated user data to the backend
+    // ...
+    handleCloseEditModal();
+  };
+
   return (
     <div className={styles.container}>
       <Header />
       <div className={styles.content}>
-        <nav className={styles.nav}>Left Navigation Bar</nav>
+        <nav className={styles.nav}><SideNavBar /></nav>
         <main className={styles.main}>
           <div className={styles.newsContainer}>
             <button className={styles.scrollButton}>{"<"}</button>
@@ -124,7 +193,9 @@ const MainPage: React.FC = () => {
                       <td>
                         <button onClick={() => handleOpenModal(founder)}>権限付与</button>
                       </td>
-                      <td><button>プロフィール詳細</button></td>
+                      <td>
+                        <button>プロフィール詳細</button>
+                      </td>
                     </tr>
                   ))}
               </tbody>
@@ -144,7 +215,7 @@ const MainPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {founderUsersData.map((founderUser : any) => (
+            {founderUsersData.map((founderUser: any) => (
               <tr key={founderUser.id}>
                 <td>{founderUser.first_name}</td>
                 <td>{founderUser.last_name}</td>
@@ -161,7 +232,42 @@ const MainPage: React.FC = () => {
           </tbody>
         </table>
         <button onClick={handleCloseModal}>閉じる</button>
-        <button>便新</button>
+        <button onClick={handleCreateFounderUser}>便新</button>
+      </Modal>
+      <Modal isOpen={isCreateModalOpen} onRequestClose={handleCloseCreateModal}>
+        <h2>Create Founder User</h2>
+        <form>
+          <label>
+            First Name:
+            <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+          </label>
+          <label>
+            Last Name:
+            <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          </label>
+          <label>
+            Email:
+            <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </label>
+          <label>
+            Password:
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          </label>
+          <label>
+            Confirm Password:
+            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          </label>
+          <label>
+            Role:
+            <select value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="readonly">Read Only</option>
+              <option value="readwrite">Read and Write</option>
+              <option value="expired">Disabled</option>
+            </select>
+          </label>
+        </form>
+        <button onClick={handleCloseCreateModal}>Close</button>
+        <button onClick={handleSaveFounderUser}>Save</button>
       </Modal>
       <Modal isOpen={editModalIsOpen} onRequestClose={handleCloseEditModal}>
         {selectedUser && (
