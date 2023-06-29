@@ -144,12 +144,36 @@ const MainPage: React.FC = () => {
   };
 
   const handleApplyEditUser = () => {
-    // Apply the edits to the user
-    // Submit the updated user data to the backend
-    // ...
-    handleCloseEditModal();
+    const token = localStorage.getItem('organizer-token');
+  
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+    console.log(JSON.stringify(selectedUser))
+    const url = `http://localhost:8000/api/v1/organizer/founder-users/${selectedUser.id}`;
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(selectedUser),
+    };
+  
+    fetch(url, requestOptions)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to update user');
+        }
+        fetchFounderUsers(selectedFounderProfile.id)
+        handleCloseEditModal();
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
   };
-
+  
   return (
     <div className={styles.container}>
       <Header />
@@ -337,7 +361,7 @@ const MainPage: React.FC = () => {
               </label>
             </form>
             <button onClick={handleCloseEditModal}>Close</button>
-            <button>Apply</button>
+            <button onClick={handleApplyEditUser}>Apply</button>
           </div>
         )}
       </Modal>
