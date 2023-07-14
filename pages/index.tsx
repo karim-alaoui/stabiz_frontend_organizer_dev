@@ -211,7 +211,7 @@ const MainPage: React.FC = () => {
                   founderProfilesData.map((founder: any) => (
                     <tr key={founder.id}>
                       <td>{founder.company_name}</td>
-                      <td>{founder.area.name_ja}</td>
+                      <td>{founder.area?.name_ja}</td>
                       <td>{founder.industries.map((industry: any) => industry.name).join(', ')}</td>
                       <td>{founder.no_of_employees}</td>
                       <td>
